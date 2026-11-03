@@ -7,7 +7,16 @@ namespace F1Predict.Domain.Models;
 public class Constructor
 {
     public int Id { get; set; }
+    /// <summary>
+    /// Название команды
+    /// </summary>
     public required string Name { get; set; }
+    /// <summary>
+    /// Национальность
+    /// </summary>
     public required string Nationality { get; set; }
+    /// <summary>
+    /// Заработанные очки
+    /// </summary>
     public int Points { get; set; }
 }

@@ -6,8 +6,14 @@ namespace F1Predict.Domain.Models;
 public class SessionResult
 {
     public int Id { get; set; }
+    /// <summary>
+    /// Идетификатор сессии
+    /// </summary>
     public int SessionId { get; set; }
     public required Session Session { get; set; }
+    /// <summary>
+    /// Идентификатор пилота
+    /// </summary>
     public int DriverId { get; set; }
     public required Driver Driver { get; set; }
 
