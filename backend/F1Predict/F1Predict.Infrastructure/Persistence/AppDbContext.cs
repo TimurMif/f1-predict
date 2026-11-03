@@ -15,7 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Driver> Drivers => Set<Driver>();
     public DbSet<GrandPrix> GrandPrixes => Set<GrandPrix>();
     public DbSet<Session> Sessions => Set<Session>();
-    public DbSet<SessionResult> SessionResults => Set<SessionResult>();
+    public DbSet<DriverResult> SessionResults => Set<DriverResult>();
     public DbSet<Prediction> Predictions => Set<Prediction>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

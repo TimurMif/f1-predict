@@ -34,5 +34,5 @@ public class Session
     /// <summary>
     /// Результаты сессии
     /// </summary>
-    public ICollection<SessionResult> Results { get; set; }= new List<SessionResult>();
+    public ICollection<DriverResult> Results { get; set; }= new List<DriverResult>();
 }

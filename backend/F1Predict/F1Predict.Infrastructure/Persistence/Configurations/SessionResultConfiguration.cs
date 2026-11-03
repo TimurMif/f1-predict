@@ -2,9 +2,9 @@ using F1Predict.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public class SessionResultConfiguration : IEntityTypeConfiguration<SessionResult>
+public class SessionResultConfiguration : IEntityTypeConfiguration<DriverResult>
 {
-    public void Configure(EntityTypeBuilder<SessionResult> builder)
+    public void Configure(EntityTypeBuilder<DriverResult> builder)
     {
         builder.HasOne(r => r.Session).WithMany(s => s.Results)
             .HasForeignKey(r => r.SessionId);

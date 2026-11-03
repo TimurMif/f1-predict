@@ -10,4 +10,8 @@
       <ProjectReference Include="..\F1Predict.Domain\F1Predict.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Repositories\" />
+    </ItemGroup>
+
 </Project>

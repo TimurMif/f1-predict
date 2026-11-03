@@ -3,7 +3,7 @@ namespace F1Predict.Domain.Models;
 /// <summary>
 /// Класс, который описывает результат конкретного пилота в конкретной сессии
 /// </summary>
-public class SessionResult
+public class DriverResult
 {
     public int Id { get; set; }
     /// <summary>
