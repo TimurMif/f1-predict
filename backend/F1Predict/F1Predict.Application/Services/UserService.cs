@@ -14,23 +14,28 @@ public class UserService(IRepository<User> userRepository) : IUserService
         return users.Select(u=>u.ToDto()).ToList();
     }
 
-    public Task<UserDto?> GetByIdAsync(int id)
+    public async Task<UserDto?> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var user = await userRepository.GetByIdAsync(id);
+        return user?.ToDto();
     }
 
-    public Task<UserDto> CreateAsync(UserEditDto dto)
+    public async Task<UserDto> CreateAsync(UserEditDto dto)
     {
-        throw new NotImplementedException();
+        var created = await userRepository.AddAsync(dto.ToEntity());
+        return created.ToDto();
     }
 
-    public Task<bool> UpdateAsync(int id, UserEditDto dto)
+    public async Task<bool> UpdateAsync(int id, UserEditDto updatedDto)
     {
-        throw new NotImplementedException();
+        var client = updatedDto.ToEntity();
+        client.Id = id;
+
+        return await userRepository.UpdateAsync(client);
     }
 
     public Task<bool> DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        return userRepository.DeleteAsync(id);
     }
 }

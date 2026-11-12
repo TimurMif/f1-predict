@@ -4,10 +4,6 @@ namespace F1Predict.Data;
 
 /// <summary>
 /// Статические seed-данные для EF Core HasData.
-/// Правила: только скалярные свойства и FK (без навигаций), явные Id,
-/// детерминированные значения (никаких DateTime.UtcNow, Random и запросов к БД).
-/// Анонимные объекты используются потому, что у сущностей required-навигации,
-/// которые в HasData задавать нельзя.
 /// </summary>
 public static class DataSeeder
 {
