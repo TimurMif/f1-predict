@@ -25,5 +25,9 @@ public class User
     /// Титулы чемпиона прогнозов у игрока, изначально их 0.
     /// </summary>
     public ICollection<Title> Titles { get; set; }= new List<Title>();
+    /// <summary>
+    /// Id чемпионата в котором участвует пользователь
+    /// </summary>
+    public int ChampionshipId { get; set; }
     public UserInChampionship? UserInChampionship { get; set; }
 }

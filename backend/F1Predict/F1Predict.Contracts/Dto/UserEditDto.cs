@@ -3,8 +3,10 @@ namespace F1Predict.Contracts.Dto;
 /// <summary>
 /// Хотя бы один из VkId / TelegramId должен быть заполнен (проверка в сервисе).
 /// </summary>
-public record UserEditDto(
-    string FirstName,
-    string? LastName,
-    string? VkId,
-    string? TelegramId);
+public record UserEditDto
+{
+    public required string FirstName { get; init; }
+    public required string LastName { get; init; }
+    public required string? VkId { get; init; }
+    public required string TelegramId { get; init; }
+}

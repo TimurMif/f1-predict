@@ -7,11 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\F1Predict.Contracts\F1Predict.Contracts.csproj" />
       <ProjectReference Include="..\F1Predict.Domain\F1Predict.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Repositories\" />
     </ItemGroup>
 
 </Project>

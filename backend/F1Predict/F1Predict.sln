@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F1Predict.Domain", "F1Predi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F1Predict.Application", "F1Predict.Application\F1Predict.Application.csproj", "{48F6B0F4-132D-4A4B-AFF9-B2F37B07ED2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F1Predict.Infrastructure", "F1Predict.Infrastructure\F1Predict.Infrastructure.csproj", "{DAD04241-CB39-4171-8291-7C3278B8018E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F1Predict.InfrastructureInMemory", "F1Predict.InfrastructureInMemory\F1Predict.InfrastructureInMemory.csproj", "{DAD04241-CB39-4171-8291-7C3278B8018E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F1Predict.Api", "F1Predict.Api\F1Predict.Api.csproj", "{0DA802AC-F8AE-4AC2-AB83-9E6E6FE1ED06}"
 EndProject

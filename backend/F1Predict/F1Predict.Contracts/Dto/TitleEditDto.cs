@@ -1,3 +1,7 @@
 namespace F1Predict.Contracts.Dto;
 
-public record TitleEditDto(int UserId, int Year);
+public record TitleEditDto
+{
+    public int Id { get; init; }
+    public required int Year { get; init; }
+}

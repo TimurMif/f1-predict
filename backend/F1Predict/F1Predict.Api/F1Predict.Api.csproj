@@ -20,7 +20,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\F1Predict.Application\F1Predict.Application.csproj" />
-      <ProjectReference Include="..\F1Predict.Infrastructure\F1Predict.Infrastructure.csproj" />
+      <ProjectReference Include="..\F1Predict.InfrastructureInMemory\F1Predict.InfrastructureInMemory.csproj" />
     </ItemGroup>
 
 </Project>
