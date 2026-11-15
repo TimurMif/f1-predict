@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Context;
 using F1Predict.Domain.Models;
@@ -19,7 +20,7 @@ public class TitleRepository(F1PredictContext context) : IRepository<Title>
     public Task<Title> AddAsync(Title entity)
     {
         var user = context.Users.FirstOrDefault(u => u.Id == entity.UserId)
-                   ?? throw new InvalidOperationException($"Пользователь с Id={entity.UserId} не найден");
+                   ?? throw new NotFoundException($"Пользователь с Id={entity.UserId} не найден");
 
         entity.Id = context.Titles.Select(t => t.Id).DefaultIfEmpty(0).Max() + 1;
         context.Titles.Add(entity);

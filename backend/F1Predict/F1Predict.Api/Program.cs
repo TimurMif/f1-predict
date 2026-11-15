@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using F1Predict.Api.ErrorHandling;
 using F1Predict.Application.Interfaces;
 using F1Predict.Application.Services;
 using F1Predict.Context;
@@ -9,10 +10,13 @@ using F1Predict.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-builder.Services.AddSingleton<F1PredictContext>(_ => DataSeeder.Seed());   // одно хранилище на всё приложение
+builder.Services.AddSingleton<F1PredictContext>(_ => DataSeeder.Seed());
 
 builder.Services.AddScoped<IRepository<Constructor>, ConstructorRepository>();
 builder.Services.AddScoped<IRepository<Driver>, DriverRepository>();
@@ -40,10 +44,16 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    using var scope = app.Services.CreateScope();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();

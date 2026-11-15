@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Application.Mapping;
 using F1Predict.Contracts.Dto;
@@ -45,7 +46,7 @@ public class PredictionService(
         if (session is null) return null;
 
         if (session.Status != SessionStatus.Scheduled || session.DateStart <= DateTime.UtcNow)
-            throw new InvalidOperationException("Приём прогнозов на эту сессию закрыт");
+            throw new ConflictException("Приём прогнозов на эту сессию закрыт");
 
         var topOne = await driverRepository.GetByIdAsync(dto.DriverTopOneId);
         var topTwo = await driverRepository.GetByIdAsync(dto.DriverTopTwoId);
@@ -55,10 +56,10 @@ public class PredictionService(
         if (dto.DriverTopOneId == dto.DriverTopTwoId ||
             dto.DriverTopOneId == dto.DriverTopThreeId ||
             dto.DriverTopTwoId == dto.DriverTopThreeId)
-            throw new InvalidOperationException("Пилоты в прогнозе должны быть разными");
+            throw new ConflictException("Пилоты в прогнозе должны быть разными");
 
         if ((await predictionRepository.GetAllAsync()).Any(p => p.UserId == userId && p.SessionId == dto.SessionId))
-            throw new InvalidOperationException("Прогноз на эту сессию уже сделан");
+            throw new ConflictException("Прогноз на эту сессию уже сделан");
 
         var created = await predictionRepository.AddAsync(dto.ToEntity(user, session, topOne, topTwo, topThree));
         return created.ToDto();
@@ -74,7 +75,7 @@ public class PredictionService(
         if (prediction.UserId != userId) return false;   // чужой прогноз не редактируем
 
         if (prediction.Session.Status != SessionStatus.Scheduled || prediction.Session.DateStart <= DateTime.UtcNow)
-            throw new InvalidOperationException("Приём прогнозов на эту сессию закрыт");
+            throw new ConflictException("Приём прогнозов на эту сессию закрыт");
 
         var topOne = await driverRepository.GetByIdAsync(dto.DriverTopOneId);
         var topTwo = await driverRepository.GetByIdAsync(dto.DriverTopTwoId);
@@ -84,7 +85,7 @@ public class PredictionService(
         if (dto.DriverTopOneId == dto.DriverTopTwoId ||
             dto.DriverTopOneId == dto.DriverTopThreeId ||
             dto.DriverTopTwoId == dto.DriverTopThreeId)
-            throw new InvalidOperationException("Пилоты в прогнозе должны быть разными");
+            throw new ConflictException("Пилоты в прогнозе должны быть разными");
 
         prediction.DriverTopOneId = topOne.Id;  prediction.DriverTopOne = topOne;
         prediction.DriverTopTwoId = topTwo.Id;  prediction.DriverTopTwo = topTwo;
@@ -105,7 +106,7 @@ public class PredictionService(
         if (prediction.UserId != userId) return false;
 
         if (prediction.Session.Status != SessionStatus.Scheduled || prediction.Session.DateStart <= DateTime.UtcNow)
-            throw new InvalidOperationException("Нельзя удалить прогноз после старта сессии");
+            throw new ConflictException("Нельзя удалить прогноз после старта сессии");
 
         return await predictionRepository.DeleteAsync(id);
     }

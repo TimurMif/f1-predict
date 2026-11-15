@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Application.Mapping;
 using F1Predict.Contracts.Dto;
@@ -45,7 +46,7 @@ public class UsersChampionshipService(
         var all = await usersChampionshipRepository.GetAllAsync();
 
         if (all.Count(c => c.CreatedByUserId == userId && c.Year == dto.Year) >= MaxChampionshipsPerSeason)
-            throw new InvalidOperationException("Лимит чемпионатов на сезон исчерпан");
+            throw new ConflictException("Лимит чемпионатов на сезон исчерпан");
 
         var created = await usersChampionshipRepository.AddAsync(dto.ToEntity(user, GenerateUniqueInviteCode(all)));
         return created.ToDto();

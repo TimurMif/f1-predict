@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Application.Mapping;
 using F1Predict.Contracts.Dto;
@@ -76,6 +77,6 @@ public class SessionService(
     {
         var all = await sessionRepository.GetAllAsync();
         if (all.Any(s => s.GrandPrixId == grandPrixId && s.Type == type && s.Id != excludeId))
-            throw new InvalidOperationException("Сессия этого типа уже существует в данном этапе");
+            throw new ConflictException("Сессия этого типа уже существует в данном этапе");
     }
 }

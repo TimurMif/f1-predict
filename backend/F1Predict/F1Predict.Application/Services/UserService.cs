@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Contracts.Dto;
 using F1Predict.Contracts.ServiceInterfaces;
@@ -66,8 +67,8 @@ public class UserService(IRepository<User> userRepository) : IUserService
     {
         var all = await userRepository.GetAllAsync();
         if (!string.IsNullOrWhiteSpace(vkId) && all.Any(u => u.VkId == vkId && u.Id != excludeId))
-            throw new InvalidOperationException("Этот VK уже привязан к другому аккаунту");
+            throw new ConflictException("Этот VK уже привязан к другому аккаунту");
         if (!string.IsNullOrWhiteSpace(telegramId) && all.Any(u => u.TelegramId == telegramId && u.Id != excludeId))
-            throw new InvalidOperationException("Этот Telegram уже привязан к другому аккаунту");
+            throw new ConflictException("Этот Telegram уже привязан к другому аккаунту");
     }
 }

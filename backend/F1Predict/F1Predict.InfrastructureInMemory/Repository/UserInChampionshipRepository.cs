@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Context;
 using F1Predict.Domain.Models;
@@ -21,7 +22,7 @@ public class UserInChampionshipRepository(F1PredictContext context) : IRepositor
         // Жёсткое правило продукта: один активный чемпионат на пользователя.
         // Сервис должен проверить это заранее и вернуть 409, здесь — последняя линия обороны.
         if (context.UserInChampionships.Any(p => p.UserId == entity.UserId))
-            throw new InvalidOperationException("Пользователь уже состоит в чемпионате");
+            throw new ConflictException("Пользователь уже состоит в чемпионате");
 
         entity.Id = context.UserInChampionships.Select(p => p.Id).DefaultIfEmpty(0).Max() + 1;
         context.UserInChampionships.Add(entity);

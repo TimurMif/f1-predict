@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Application.Mapping;
 using F1Predict.Contracts.Dto;
@@ -70,13 +71,13 @@ public class TitleService(IRepository<Title> titleRepository, IRepository<User> 
     private static void EnsureYearNotFuture(int year)
     {
         if (year > DateTime.UtcNow.Year)
-            throw new InvalidOperationException("Нельзя выдать титул за будущий сезон");
+            throw new ConflictException("Нельзя выдать титул за будущий сезон");
     }
     
     private async Task EnsureTitleUnique(int userId, int year, int? excludeId)
     {
         var all = await titleRepository.GetAllAsync();
         if (all.Any(t => t.UserId == userId && t.Year == year && t.Id != excludeId))
-            throw new InvalidOperationException($"У пользователя уже есть титул за {year} сезон");
+            throw new ConflictException($"У пользователя уже есть титул за {year} сезон");
     }
 }

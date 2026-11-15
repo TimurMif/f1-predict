@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Application.Mapping;
 using F1Predict.Contracts.Dto;
@@ -60,15 +61,21 @@ public class GrandPrixService(IRepository<GrandPrix> grandPrixRepository) : IGra
     /// <summary>
     /// Удаляет гран при по его Id
     /// </summary>
-    public Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        return grandPrixRepository.DeleteAsync(id);
+        var grandPrix = await grandPrixRepository.GetByIdAsync(id);
+        if (grandPrix is null) return false;
+
+        if (grandPrix.Sessions.Count > 0)
+            throw new ConflictException("Нельзя удалить этап, в котором есть сессии");
+
+        return await grandPrixRepository.DeleteAsync(id);
     }
     
     private async Task EnsureRoundUnique(int year, int round, int? excludeId)
     {
         var all = await grandPrixRepository.GetAllAsync();
         if (all.Any(g => g.Year == year && g.RoundNumber == round && g.Id != excludeId))
-            throw new InvalidOperationException($"Этап №{round} в сезоне {year} уже существует");
+            throw new ConflictException($"Этап №{round} в сезоне {year} уже существует");
     }
 }

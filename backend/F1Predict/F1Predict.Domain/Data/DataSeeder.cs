@@ -110,6 +110,7 @@ public class DataSeeder
             ("Australian Grand Prix", "Albert Park", "Australia", 1, 2026),
             ("Chinese Grand Prix", "Shanghai GP", "China", 2, 2026),
             ("Japanese Grand Prix", "Suzuka", "Japan", 3, 2026),
+            ("Miami Grand Prix", "Miami International Autodrome", "USA", 4, 2026),
         };
 
         for (var i = 0; i < data.Length; i++)
@@ -142,6 +143,11 @@ public class DataSeeder
 
             (3, "Qualifying", SessionType.Qualifying, Utc(3, 28, 6), Utc(3, 28, 7), SessionStatus.Completed),
             (3, "Race", SessionType.Race, Utc(3, 29, 5), Utc(3, 29, 7), SessionStatus.Completed),
+            
+            (4, "Qualifying", SessionType.Qualifying,
+                DateTime.UtcNow.AddDays(7), DateTime.UtcNow.AddDays(7).AddHours(1), SessionStatus.Scheduled),
+            (4, "Race", SessionType.Race,
+                DateTime.UtcNow.AddDays(8), DateTime.UtcNow.AddDays(8).AddHours(2), SessionStatus.Scheduled),
         };
 
         for (var i = 0; i < data.Length; i++)

@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Application.Mapping;
 using F1Predict.Contracts.Dto;
@@ -43,13 +44,13 @@ public class DriverResultService(
         if (driver is null) return null;
 
         if (session.Status != SessionStatus.Completed)
-            throw new InvalidOperationException("Результаты вносятся только после завершения сессии");
+            throw new ConflictException("Результаты вносятся только после завершения сессии");
 
         var all = await driverResultRepository.GetAllAsync();
         if (all.Any(r => r.SessionId == dto.SessionId && r.DriverId == dto.DriverId))
-            throw new InvalidOperationException("Результат этого пилота в данной сессии уже существует");
+            throw new ConflictException("Результат этого пилота в данной сессии уже существует");
         if (all.Any(r => r.SessionId == dto.SessionId && r.Position == dto.Position))
-            throw new InvalidOperationException("Эта позиция в данной сессии уже занята");
+            throw new ConflictException("Эта позиция в данной сессии уже занята");
 
         var created = await driverResultRepository.AddAsync(dto.ToEntity(session, driver));
         return created.ToDto();
@@ -65,7 +66,7 @@ public class DriverResultService(
 
         var all = await driverResultRepository.GetAllAsync();
         if (all.Any(r => r.SessionId == result.SessionId && r.Position == dto.Position && r.Id != id))
-            throw new InvalidOperationException("Эта позиция в данной сессии уже занята");
+            throw new ConflictException("Эта позиция в данной сессии уже занята");
 
         result.Position = dto.Position;
         result.BestLapTimeMs = dto.BestLapTimeMs;

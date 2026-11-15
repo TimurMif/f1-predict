@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Application.Mapping;
 using F1Predict.Contracts.Dto;
@@ -81,6 +82,6 @@ public class DriverService(
     {
         var all = await driverRepository.GetAllAsync();
         if (all.Any(d => d.Number == number && d.Id != excludeId))
-            throw new InvalidOperationException("Пилот с таким номером уже существует");
+            throw new ConflictException("Пилот с таким номером уже существует");
     }
 }

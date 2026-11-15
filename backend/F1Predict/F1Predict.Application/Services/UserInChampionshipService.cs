@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Application.Mapping;
 using F1Predict.Contracts.Dto;
@@ -41,7 +42,7 @@ public class UserInChampionshipService(
         if (user is null) return null;
 
         if (user.UserInChampionship is not null)
-            throw new InvalidOperationException("Вы уже состоите в чемпионате — сначала выйдите из текущего");
+            throw new ConflictException("Вы уже состоите в чемпионате — сначала выйдите из текущего");
 
         var championship = (await usersChampionshipRepository.GetAllAsync())
             .FirstOrDefault(c => c.InviteCode == dto.InviteCode.ToUpperInvariant());
