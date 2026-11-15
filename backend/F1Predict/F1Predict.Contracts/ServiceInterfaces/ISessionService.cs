@@ -20,7 +20,7 @@ public interface ISessionService
     /// <summary>
     /// Создает новую сессию
     /// </summary>
-    public Task<SessionDto> CreateAsync(SessionEditDto dto);
+    public Task<SessionDto?> CreateAsync(SessionEditDto dto);
 
     /// <summary>
     /// Обновляет данные существующей сессии

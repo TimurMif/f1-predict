@@ -20,7 +20,7 @@ public static class MappingExtensions
             LastName = u.LastName,
             Points = u.Points,
             Titles = u.Titles.Select(t => t.ToDto()).ToList(),
-            ChampionshipId = u.UserInChampionship.ChampionshipId
+            ChampionshipId = u.UserInChampionship?.ChampionshipId
         };
     }
     
@@ -105,7 +105,7 @@ public static class MappingExtensions
         {
             Id = c.Id,
             Year = c.Year,
-            InviteCode = c.InviteCode,
+            CreatedByUserId = c.CreatedByUserId,
             Users = c.Users.Select(u => u.ToDto()).ToList()
         };
     }

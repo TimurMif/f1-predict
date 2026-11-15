@@ -20,7 +20,7 @@ public interface IDriverService
     /// <summary>
     /// Создает нового пилота
     /// </summary>
-    public Task<DriverDto> CreateAsync(DriverEditDto dto);
+    public Task<DriverDto?> CreateAsync(DriverEditDto dto);
 
     /// <summary>
     /// Обновляет данные существующего пилота

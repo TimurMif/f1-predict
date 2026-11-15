@@ -25,10 +25,10 @@ public interface IUserService
     /// <summary>
     /// Обновляет данные существующего пользователя
     /// </summary>
-    public Task<bool> UpdateAsync(int id, UserEditDto dto);
+    public Task<bool> UpdateAsync(int id, int userId, UserEditDto dto);
 
     /// <summary>
     /// Удаляет пользователя по его Id
     /// </summary>
-    public Task<bool> DeleteAsync(int id);
+    public Task<bool> DeleteAsync(int id, int userId);
 }

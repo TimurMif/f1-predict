@@ -20,8 +20,7 @@ public interface IUserInChampionshipService
     /// <summary>
     /// Создает новую запись пользователя в чемпионате
     /// </summary>
-    public Task<UserInChampionshipDto> CreateAsync(UserInChampionshipEditDto dto);
-
+    Task<UserInChampionshipDto?> CreateAsync(int userId, UserInChampionshipEditDto dto);
     /// <summary>
     /// Обновляет данные существующей записи пользователя в чемпионате
     /// </summary>
@@ -30,5 +29,5 @@ public interface IUserInChampionshipService
     /// <summary>
     /// Удаляет запись пользователя в чемпионате по его Id
     /// </summary>
-    public Task<bool> DeleteAsync(int id);
+    Task<bool> DeleteAsync(int id, int userId);
 }

@@ -18,12 +18,13 @@ public class TitleRepository(F1PredictContext context) : IRepository<Title>
 
     public Task<Title> AddAsync(Title entity)
     {
+        var user = context.Users.FirstOrDefault(u => u.Id == entity.UserId)
+                   ?? throw new InvalidOperationException($"Пользователь с Id={entity.UserId} не найден");
+
         entity.Id = context.Titles.Select(t => t.Id).DefaultIfEmpty(0).Max() + 1;
         context.Titles.Add(entity);
-        
-        var user = context.Users.FirstOrDefault(u => u.Id == entity.UserId);
-        user?.Titles.Add(entity);
-        
+        user.Titles.Add(entity);
+
         return Task.FromResult(entity);
     }
 

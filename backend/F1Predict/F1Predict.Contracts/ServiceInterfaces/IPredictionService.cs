@@ -20,15 +20,15 @@ public interface IPredictionService
     /// <summary>
     /// Создает новый прогноз
     /// </summary>
-    public Task<PredictionDto> CreateAsync(PredictionEditDto dto);
+    public Task<PredictionDto?> CreateAsync(int userId, PredictionEditDto dto);
 
     /// <summary>
     /// Обновляет данные существующего прогноза
     /// </summary>
-    public Task<bool> UpdateAsync(int id, PredictionEditDto dto);
+    public Task<bool> UpdateAsync(int id, int userId, PredictionEditDto dto);
 
     /// <summary>
     /// Удаляет прогноз по его Id
     /// </summary>
-    public Task<bool> DeleteAsync(int id);
+    public Task<bool> DeleteAsync(int id, int userId);
 }

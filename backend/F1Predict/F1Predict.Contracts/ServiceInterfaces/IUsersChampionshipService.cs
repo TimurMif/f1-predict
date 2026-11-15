@@ -20,15 +20,15 @@ public interface IUsersChampionshipService
     /// <summary>
     /// Создает новый чемпионат пользователей
     /// </summary>
-    public Task<UsersChampionshipDto> CreateAsync(UsersChampionshipEditDto dto);
+    public Task<UsersChampionshipDto?> CreateAsync(int userId, UsersChampionshipEditDto dto);
 
     /// <summary>
     /// Обновляет данные существующего чемпионата пользователей
     /// </summary>
-    public Task<bool> UpdateAsync(int id, UsersChampionshipEditDto dto);
-
+    public Task<bool> UpdateAsync(int id, int userId, UsersChampionshipEditDto dto);
+    public Task<string?> GetInviteCodeAsync(int id, int userId);
     /// <summary>
     /// Удаляет чемпионат пользователей по его Id
     /// </summary>
-    public Task<bool> DeleteAsync(int id);
+    public Task<bool> DeleteAsync(int id, int userId);
 }

@@ -20,7 +20,7 @@ public interface IDriverResultService
     /// <summary>
     /// Создает новый результат пилота
     /// </summary>
-    public Task<DriverResultDto> CreateAsync(DriverResultEditDto dto);
+    public Task<DriverResultDto?> CreateAsync(DriverResultEditDto dto);
 
     /// <summary>
     /// Обновляет данные существующего результата пилота

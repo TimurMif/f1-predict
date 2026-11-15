@@ -20,7 +20,7 @@ public interface ITitleService
     /// <summary>
     /// Создает нового титула
     /// </summary>
-    public Task<TitleDto> CreateAsync(TitleEditDto dto);
+    public Task<TitleDto?> CreateAsync(TitleEditDto dto);
 
     /// <summary>
     /// Обновляет данные существующего титула
