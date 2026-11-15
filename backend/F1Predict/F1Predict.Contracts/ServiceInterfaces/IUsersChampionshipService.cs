@@ -26,6 +26,10 @@ public interface IUsersChampionshipService
     /// Обновляет данные существующего чемпионата пользователей
     /// </summary>
     public Task<bool> UpdateAsync(int id, int userId, UsersChampionshipEditDto dto);
+    
+    /// <summary>
+    /// Получение invite-code
+    /// </summary>
     public Task<string?> GetInviteCodeAsync(int id, int userId);
     /// <summary>
     /// Удаляет чемпионат пользователей по его Id

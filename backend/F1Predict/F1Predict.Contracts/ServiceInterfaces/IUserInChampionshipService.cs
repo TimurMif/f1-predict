@@ -21,10 +21,6 @@ public interface IUserInChampionshipService
     /// Создает новую запись пользователя в чемпионате
     /// </summary>
     Task<UserInChampionshipDto?> CreateAsync(int userId, UserInChampionshipEditDto dto);
-    /// <summary>
-    /// Обновляет данные существующей записи пользователя в чемпионате
-    /// </summary>
-    public Task<bool> UpdateAsync(int id, UserInChampionshipEditDto dto);
 
     /// <summary>
     /// Удаляет запись пользователя в чемпионате по его Id

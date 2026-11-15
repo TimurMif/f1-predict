@@ -52,23 +52,6 @@ public class UserInChampionshipService(
     }
 
     /// <summary>
-    /// Обновление данных существующей записи пользователя
-    /// </summary>
-    public async Task<bool> UpdateAsync(int id, UserInChampionshipEditDto dto)
-    {
-        var usersChampionship = await usersChampionshipRepository.GetByIdAsync(dto.ChampionshipId);
-        if (usersChampionship == null) return false;
-        
-        var user = await userRepository.GetByIdAsync(dto.UserId);
-        if (user == null) return false;
-
-        var userInChampionship = dto.ToEntity(user, usersChampionship);
-        userInChampionship.Id = id;
-
-        return await userInChampionshipRepository.UpdateAsync(userInChampionship);
-    }
-
-    /// <summary>
     /// Удаление записи по ее Id
     /// </summary>
     public async Task<bool> DeleteAsync(int id, int userId)
