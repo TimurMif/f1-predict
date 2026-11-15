@@ -6,5 +6,4 @@ public enum SessionType
     Race,
     Sprint,
     SprintQualifying,
-    FreePractice
 }

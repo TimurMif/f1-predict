@@ -11,7 +11,7 @@ public record UserEditDto
     public required string FirstName { get; init; }
     
     [StringLength(50, MinimumLength = 2)]
-    public required string LastName { get; init; }
+    public required string? LastName { get; init; }
     public required string? VkId { get; init; }
     public required string? TelegramId { get; init; }
 }

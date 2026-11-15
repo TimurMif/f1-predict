@@ -21,7 +21,7 @@ public class Prediction
     /// </summary>
     public int DriverTopOneId { get; set; }
     /// <summary>
-    /// Идентификатор пилота, которые будет вторым
+    /// Идентификатор пилота, которые будет первым
     /// </summary>
     public required Driver DriverTopOne { get; set; }
     /// <summary>
