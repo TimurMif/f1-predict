@@ -197,6 +197,7 @@ public static class MappingExtensions
             Name = g.Name,
             CircuitName = g.CircuitName,
             Country = g.Country,
+            RoundNumber = g.RoundNumber,
             Year = g.Year,
             Sessions = g.Sessions.Select(s => s.ToDto()).ToList()
         };
