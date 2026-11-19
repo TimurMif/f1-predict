@@ -7,6 +7,7 @@ using F1Predict.Contracts.ServiceInterfaces;
 using F1Predict.Data;
 using F1Predict.Domain.Models;
 using F1Predict.Infrastructure.Repository;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,9 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+builder.Services.ConfigureHttpJsonOptions(o =>
+    o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddSingleton<F1PredictContext>(_ => DataSeeder.Seed());
 
@@ -49,11 +53,7 @@ app.UseExceptionHandler();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-}
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();

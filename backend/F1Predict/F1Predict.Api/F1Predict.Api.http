@@ -1,2 +1,40 @@
-@F1Predict.Api_HostAddress = http://localhost:5069
+@host = http://localhost:5069
 
+### Все этапы (4 штуки)
+GET {{host}}/api/grand-prix
+
+### Этап по Id
+GET {{host}}/api/grand-prix/1
+
+### Несуществующий этап -> 404
+GET {{host}}/api/grand-prix/999
+
+### Создать этап -> 201
+POST {{host}}/api/grand-prix
+Content-Type: application/json
+
+{ "name": "Test Grand Prix", "circuitName": "Test Circuit", "country": "Testland", "roundNumber": 10, "year": 2026 }
+
+### Дубликат номера этапа в сезоне -> 409
+POST {{host}}/api/grand-prix
+Content-Type: application/json
+
+{ "name": "Duplicate", "circuitName": "Test Circuit", "country": "Testland", "roundNumber": 1, "year": 2026 }
+
+### Невалидные данные -> 400
+POST {{host}}/api/grand-prix
+Content-Type: application/json
+
+{ "name": "", "circuitName": "Test Circuit", "country": "Testland", "roundNumber": 99, "year": 2026 }
+
+### Изменить созданный этап -> 204
+PUT {{host}}/api/grand-prix/5
+Content-Type: application/json
+
+{ "name": "Renamed Grand Prix", "circuitName": "Test Circuit", "country": "Testland", "roundNumber": 10, "year": 2026 }
+
+### Удалить этап с сессиями -> 409
+DELETE {{host}}/api/grand-prix/1
+
+### Удалить созданный этап -> 204
+DELETE {{host}}/api/grand-prix/5
