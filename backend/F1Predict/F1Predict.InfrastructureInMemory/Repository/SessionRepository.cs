@@ -4,18 +4,30 @@ using F1Predict.Domain.Models;
 
 namespace F1Predict.Infrastructure.Repository;
 
+/// <summary>
+/// Репозиторий для работы с сессиями
+/// </summary>
 public class SessionRepository(F1PredictContext context) : IRepository<Session>
 {
+    /// <summary>
+    /// Возвращает все сессии
+    /// </summary>
     public Task<List<Session>> GetAllAsync()
     {
         return Task.FromResult(context.Sessions.ToList());
     }
 
+    /// <summary>
+    /// Возвращает сессию по ее id
+    /// </summary>
     public Task<Session?> GetByIdAsync(int id)
     {
         return Task.FromResult(context.Sessions.FirstOrDefault(s => s.Id == id));
     }
 
+    /// <summary>
+    /// Добавляет новую сессию
+    /// </summary>
     public Task<Session> AddAsync(Session entity)
     {
         entity.Id = context.Sessions.Select(s => s.Id).DefaultIfEmpty(0).Max() + 1;
@@ -27,6 +39,9 @@ public class SessionRepository(F1PredictContext context) : IRepository<Session>
         return Task.FromResult(entity);
     }
 
+    /// <summary>
+    /// Обновляет существующую сессию
+    /// </summary>
     public Task<bool> UpdateAsync(Session entity)
     {
         var existing = context.Sessions.FirstOrDefault(s => s.Id == entity.Id);
@@ -41,15 +56,15 @@ public class SessionRepository(F1PredictContext context) : IRepository<Session>
         return Task.FromResult(true);
     }
 
+    /// <summary>
+    /// Удаляет сессию по Id
+    /// </summary>
     public Task<bool> DeleteAsync(int id)
     {
         var entity = context.Sessions.FirstOrDefault(s => s.Id == id);
         if (entity == null) return Task.FromResult(false);
 
-        // Прогнозы — пользовательские данные: молча не удаляем, запрещаем удаление сессии
         if (context.Predictions.Any(p => p.SessionId == id)) return Task.FromResult(false);
-
-        // Результаты — «дети» сессии: каскадное удаление
         context.DriverResults.RemoveAll(r => r.SessionId == id);
 
         var grandPrix = context.GrandPrix.FirstOrDefault(g => g.Id == entity.GrandPrixId);

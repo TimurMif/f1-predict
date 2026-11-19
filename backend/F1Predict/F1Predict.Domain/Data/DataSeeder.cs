@@ -4,6 +4,9 @@ using F1Predict.Domain.ValueObjects;
 
 namespace F1Predict.Data;
 
+/// <summary>
+/// Источник данных приложения для InMemory хранения
+/// </summary>
 public class DataSeeder
 {
     public static readonly DateTime ReferenceDateNow =

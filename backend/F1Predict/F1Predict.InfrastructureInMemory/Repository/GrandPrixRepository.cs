@@ -4,18 +4,30 @@ using F1Predict.Domain.Models;
 
 namespace F1Predict.Infrastructure.Repository;
 
+/// <summary>
+/// Репозиторий для работы с Гран при
+/// </summary>
 public class GrandPrixRepository(F1PredictContext context) : IRepository<GrandPrix>
 {
+    /// <summary>
+    /// Возвращает все Гран при
+    /// </summary>
     public Task<List<GrandPrix>> GetAllAsync()
     {
         return Task.FromResult(context.GrandPrix.ToList());
     }
-
+    
+    /// <summary>
+    /// Возвращает Гран при по его Id
+    /// </summary>
     public Task<GrandPrix?> GetByIdAsync(int id)
     {
         return Task.FromResult(context.GrandPrix.FirstOrDefault(g => g.Id == id));
     }
 
+    /// <summary>
+    /// Добавляем новый Гран при
+    /// </summary>
     public Task<GrandPrix> AddAsync(GrandPrix entity)
     {
         entity.Id = context.GrandPrix.Select(g => g.Id).DefaultIfEmpty(0).Max() + 1;
@@ -24,6 +36,9 @@ public class GrandPrixRepository(F1PredictContext context) : IRepository<GrandPr
         return Task.FromResult(entity);
     }
 
+    /// <summary>
+    /// Обновляем существующий Гран при
+    /// </summary>
     public Task<bool> UpdateAsync(GrandPrix entity)
     {
         var existing = context.GrandPrix.FirstOrDefault(g => g.Id == entity.Id);
@@ -38,6 +53,9 @@ public class GrandPrixRepository(F1PredictContext context) : IRepository<GrandPr
         return Task.FromResult(true);
     }
 
+    /// <summary>
+    /// Удаляем Гран при по его Id
+    /// </summary>
     public Task<bool> DeleteAsync(int id)
     {
         var entity = context.GrandPrix.FirstOrDefault(g => g.Id == id);

@@ -4,18 +4,30 @@ using F1Predict.Domain.Models;
 
 namespace F1Predict.Infrastructure.Repository;
 
+/// <summary>
+/// Репозиторий для работы с пользовательскими чемпионатами
+/// </summary>
 public class UsersChampionshipRepository(F1PredictContext context) : IRepository<UsersChampionship>
 {
+    /// <summary>
+    /// Возвращает все чемпионаты
+    /// </summary>
     public Task<List<UsersChampionship>> GetAllAsync()
     {
         return Task.FromResult(context.UsersChampionships.ToList());
     }
 
+    /// <summary>
+    /// Возвращает чемпионат по Id
+    /// </summary>
     public Task<UsersChampionship?> GetByIdAsync(int id)
     {
         return Task.FromResult(context.UsersChampionships.FirstOrDefault(u => u.Id == id));
     }
 
+    /// <summary>
+    /// Добавляет новый чемпионат
+    /// </summary>
     public Task<UsersChampionship> AddAsync(UsersChampionship entity)
     {
         entity.Id = context.UsersChampionships.Select(u => u.Id).DefaultIfEmpty(0).Max() + 1;
@@ -24,6 +36,9 @@ public class UsersChampionshipRepository(F1PredictContext context) : IRepository
         return Task.FromResult(entity);
     }
 
+    /// <summary>
+    /// Обновляет существующий чемпионат
+    /// </summary>
     public Task<bool> UpdateAsync(UsersChampionship entity)
     {
         var existing = context.UsersChampionships.FirstOrDefault(u => u.Id == entity.Id);
@@ -35,12 +50,14 @@ public class UsersChampionshipRepository(F1PredictContext context) : IRepository
         return Task.FromResult(true);
     }
 
+    /// <summary>
+    /// Удаляет чемпионат по Id
+    /// </summary>
     public Task<bool> DeleteAsync(int id)
     {
         var entity = context.UsersChampionships.FirstOrDefault(c => c.Id == id);
         if (entity == null) return Task.FromResult(false);
 
-        // Каскад: удаляем участников и освобождаем пользователей
         foreach (var p in context.UserInChampionships.Where(p => p.ChampionshipId == id).ToList())
         {
             var user = context.Users.FirstOrDefault(u => u.Id == p.UserId);

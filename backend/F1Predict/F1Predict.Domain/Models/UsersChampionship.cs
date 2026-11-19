@@ -1,21 +1,37 @@
 namespace F1Predict.Domain.Models;
 
+/// <summary>
+/// Класс, описывающий пользовательский чемпионат
+/// </summary>
 public class UsersChampionship
 {
+    /// <summary>
+    /// Уникальный идентификатор
+    /// </summary>
     public int Id { get; set; }
+    
+    /// <summary>
+    /// Год, когда проводится чемпионат
+    /// </summary>
     public int Year { get; set; }
+    
     /// <summary>
     /// Пользователь-хост который создал чемпионат для других пользователей
-    /// и может с помощью invite code приглашать других
     /// </summary>
     public int CreatedByUserId { get; set; }
-    public required User CreatedByUser { get; set; }
+    
     /// <summary>
-    /// Обязательный 6-значный пригласительный код, которым Users делятся друг с другом чтобы пригласить в чемпионат
+    /// Навигационное свойство пользователя-создателя
+    /// </summary>
+    public required User CreatedByUser { get; set; }
+   
+    /// <summary>
+    /// Обязательный 6-значный пригласительный код
     /// </summary>
     public required string InviteCode { get; set; }
+    
     /// <summary>
-    /// Пользователи, которые соревнуются друг с другом.
+    /// Пользователи, которые учатвуют в этом чемпионате
     /// </summary>
     public ICollection<UserInChampionship> Users { get; set; } = new List<UserInChampionship>();
     

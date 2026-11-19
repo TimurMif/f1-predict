@@ -4,18 +4,30 @@ using F1Predict.Domain.Models;
 
 namespace F1Predict.Infrastructure.Repository;
 
+/// <summary>
+/// Репозиторий для работы с прогнозами
+/// </summary>
 public class PredictionRepository(F1PredictContext context) : IRepository<Prediction>
 {
+    /// <summary>
+    /// Возвращает все прогнозы
+    /// </summary>
     public Task<List<Prediction>> GetAllAsync()
     {
         return Task.FromResult(context.Predictions.ToList());
     }
 
+    /// <summary>
+    /// Возвращает прогноз по Id
+    /// </summary>
     public Task<Prediction?> GetByIdAsync(int id)
     {
         return Task.FromResult(context.Predictions.FirstOrDefault(p => p.Id == id));
     }
 
+    /// <summary>
+    /// Добавляем новый прогноз
+    /// </summary>
     public Task<Prediction> AddAsync(Prediction entity)
     {
         entity.Id = context.Predictions.Select(p => p.Id).DefaultIfEmpty(0).Max() + 1;
@@ -27,6 +39,9 @@ public class PredictionRepository(F1PredictContext context) : IRepository<Predic
         return Task.FromResult(entity);
     }
 
+    /// <summary>
+    /// Обновляем прогноз
+    /// </summary>
     public Task<bool> UpdateAsync(Prediction entity)
     {
         var existing = context.Predictions.FirstOrDefault(p => p.Id == entity.Id);
@@ -44,6 +59,9 @@ public class PredictionRepository(F1PredictContext context) : IRepository<Predic
         return Task.FromResult(true);
     }
 
+    /// <summary>
+    /// Удаляем прогноз по Id
+    /// </summary>
     public Task<bool> DeleteAsync(int id)
     {
         var entity = context.Predictions.FirstOrDefault(p => p.Id == id);

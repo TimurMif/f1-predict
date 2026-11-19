@@ -4,18 +4,30 @@ using F1Predict.Domain.Models;
 
 namespace F1Predict.Infrastructure.Repository;
 
+/// <summary>
+/// Репозиторий для работы с пилотами
+/// </summary>
 public class DriverRepository(F1PredictContext context) : IRepository<Driver>
 {
+    /// <summary>
+    /// Возвращает всех пилотов
+    /// </summary>
     public Task<List<Driver>> GetAllAsync()
     {
         return Task.FromResult(context.Drivers.ToList());
     }
 
+    /// <summary>
+    /// Получение пилота по его id
+    /// </summary>
     public Task<Driver?> GetByIdAsync(int id)
     {
         return Task.FromResult(context.Drivers.FirstOrDefault(d => d.Id == id));
     }
 
+    /// <summary>
+    /// Добавляем нового пилота
+    /// </summary>
     public Task<Driver> AddAsync(Driver entity)
     {
         entity.Id = context.Drivers.Select(d => d.Id).DefaultIfEmpty(0).Max() + 1;
@@ -24,6 +36,9 @@ public class DriverRepository(F1PredictContext context) : IRepository<Driver>
         return Task.FromResult(entity);
     }
 
+    /// <summary>
+    /// Обновление данных существующего пилота
+    /// </summary>
     public Task<bool> UpdateAsync(Driver entity)
     {
         var existing = context.Drivers.FirstOrDefault(d => d.Id == entity.Id);
@@ -40,6 +55,9 @@ public class DriverRepository(F1PredictContext context) : IRepository<Driver>
         return Task.FromResult(true);
     }
 
+    /// <summary>
+    /// Удаление пилота по его Id
+    /// </summary>
     public Task<bool> DeleteAsync(int id)
     {
         var entity = context.Drivers.FirstOrDefault(d => d.Id == id);

@@ -11,12 +11,16 @@ namespace F1Predict.Api.Controllers;
 [Route("api/grand-prix")]
 public class GrandPrixController(IGrandPrixService grandPrixService) : ControllerBase
 {
-    /// <summary>Список всех этапов с сессиями.</summary>
+    /// <summary>
+    /// Список всех этапов с сессиями.
+    /// </summary>
     [HttpGet]
     public async Task<ActionResult<List<GrandPrixDto>>> GetAll()
         => Ok(await grandPrixService.GetAllAsync());
 
-    /// <summary>Этап по Id.</summary>
+    /// <summary>
+    /// Этап по Id.
+    /// </summary>
     [HttpGet("{id:int}")]
     public async Task<ActionResult<GrandPrixDto>> GetById(int id)
     {
@@ -24,7 +28,9 @@ public class GrandPrixController(IGrandPrixService grandPrixService) : Controlle
         return grandPrix is null ? NotFound() : Ok(grandPrix);
     }
 
-    /// <summary>Создать этап.</summary>
+    /// <summary>
+    /// Создать этап.
+    /// </summary>
     [HttpPost]
     public async Task<ActionResult<GrandPrixDto>> Create([FromBody] GrandPrixEditDto dto)
     {
@@ -32,12 +38,16 @@ public class GrandPrixController(IGrandPrixService grandPrixService) : Controlle
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
-    /// <summary>Изменить этап.</summary>
+    /// <summary>
+    /// Изменить этап.
+    /// </summary>
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] GrandPrixEditDto dto)
         => await grandPrixService.UpdateAsync(id, dto) ? NoContent() : NotFound();
 
-    /// <summary>Удалить этап (только если в нём нет сессий).</summary>
+    /// <summary>
+    /// Удалить этап (только если в нём нет сессий).
+    /// </summary>
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
         => await grandPrixService.DeleteAsync(id) ? NoContent() : NotFound();

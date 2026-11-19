@@ -3,7 +3,7 @@ using F1Predict.Domain.Models;
 namespace F1Predict.Data;
 
 /// <summary>
-/// Статические seed-данные для EF Core HasData.
+/// Источник данных приложения для Ef Core
 /// </summary>
 public static class DataSeederEf
 {

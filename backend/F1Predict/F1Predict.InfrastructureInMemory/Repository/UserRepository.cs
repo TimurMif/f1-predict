@@ -5,7 +5,7 @@ using F1Predict.Domain.Models;
 namespace F1Predict.Infrastructure.Repository;
 
 /// <summary>
-/// Репозиторий для работы с Базой данных пользователей
+/// Репозиторий для работы с пользователями
 /// </summary>
 public class UserRepository(F1PredictContext context) : IRepository<User>
 {
@@ -37,7 +37,7 @@ public class UserRepository(F1PredictContext context) : IRepository<User>
     }
 
     /// <summary>
-    /// Обновляет пользователя
+    /// Обновляет существующего пользователя
     /// </summary>
     public Task<bool> UpdateAsync(User entity)
     {
