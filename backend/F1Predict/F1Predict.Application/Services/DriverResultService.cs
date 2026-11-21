@@ -18,10 +18,15 @@ public class DriverResultService(
     /// <summary>
     /// Возвращает всех результаты пилотов
     /// </summary>
-    public async Task<List<DriverResultDto>> GetAllAsync()
+    public async Task<List<DriverResultDto>> GetAllAsync(int? sessionId = null)
     {
         var driverResults = await driverResultRepository.GetAllAsync();
-        return driverResults.Select(d => d.ToDto()).ToList();
+        return driverResults
+            .Where(r => sessionId is null || r.SessionId == sessionId)
+            .OrderBy(r => r.SessionId)
+            .ThenBy(r => r.Position)
+            .Select(r => r.ToDto())
+            .ToList();
     }
 
     /// <summary>
@@ -36,12 +41,12 @@ public class DriverResultService(
     /// <summary>
     /// Создает новый результат пилота
     /// </summary>
-    public async Task<DriverResultDto?> CreateAsync(DriverResultEditDto dto)
+    public async Task<DriverResultDto> CreateAsync(DriverResultEditDto dto)
     {
-        var session = await sessionRepository.GetByIdAsync(dto.SessionId);
-        if (session is null) return null;
-        var driver = await driverRepository.GetByIdAsync(dto.DriverId);
-        if (driver is null) return null;
+        var session = await sessionRepository.GetByIdAsync(dto.SessionId)
+                      ?? throw new NotFoundException($"Сессия с Id={dto.SessionId} не найдена");
+        var driver = await driverRepository.GetByIdAsync(dto.DriverId)
+                     ?? throw new NotFoundException($"Пилот с Id={dto.DriverId} не найден");
 
         if (session.Status != SessionStatus.Completed)
             throw new ConflictException("Результаты вносятся только после завершения сессии");

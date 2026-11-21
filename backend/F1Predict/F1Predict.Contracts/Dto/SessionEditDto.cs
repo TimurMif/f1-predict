@@ -18,12 +18,13 @@ public record SessionEditDto
     /// Название сессии
     /// </summary>
     [Required(ErrorMessage = "Название сессии обязательно")]
-    [StringLength(100, MinimumLength = 2)]
+    [StringLength(100, MinimumLength = 2, ErrorMessage = "Название сессии: от 2 до 100 символов")]
     public required string Name { get; init; }
     
     /// <summary>
     /// Тип сессии Type: Qualifying, Race, Sprint, SprintQualifying, FreePractice.
     /// </summary>
+    [EnumDataType(typeof(SessionType), ErrorMessage = "Недопустимый тип сессии")]
     public required SessionType Type { get; init; }
     
     /// <summary>
@@ -39,5 +40,13 @@ public record SessionEditDto
     /// <summary>
     /// Статус сессии Status: Scheduled, InProgress, Completed, Cancelled.
     /// </summary>
+    [EnumDataType(typeof(SessionStatus), ErrorMessage = "Недопустимый статус сессии")]
     public required SessionStatus Status { get; init; }
+    
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (DateEnd <= DateStart)
+            yield return new ValidationResult(
+                "Окончание сессии должно быть позже начала", [nameof(DateEnd)]);
+    }
 }

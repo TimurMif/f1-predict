@@ -8,10 +8,10 @@ namespace F1Predict.Contracts.ServiceInterfaces;
 public interface ISessionService
 {
     /// <summary>
-    /// Возвращает список всех сессий
+    /// Возвращает список сессий по порядку начала; если указан grandPrixId, только сессии этого этапа
     /// </summary>
-    public Task<List<SessionDto>> GetAllAsync();
-
+    public Task<List<SessionDto>> GetAllAsync(int? grandPrixId = null);
+    
     /// <summary>
     /// Возвращает сессию по ее Id
     /// </summary>
@@ -20,7 +20,7 @@ public interface ISessionService
     /// <summary>
     /// Создает новую сессию
     /// </summary>
-    public Task<SessionDto?> CreateAsync(SessionEditDto dto);
+    public Task<SessionDto> CreateAsync(SessionEditDto dto);
 
     /// <summary>
     /// Обновляет данные существующей сессии

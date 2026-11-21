@@ -12,15 +12,21 @@ namespace F1Predict.Application.Services;
 /// </summary>
 public class SessionService(
     IRepository<Session> sessionRepository,
-    IRepository<GrandPrix> grandPrixRepository) : ISessionService
+    IRepository<GrandPrix> grandPrixRepository,
+    IRepository<Prediction> predictionRepository
+    ) : ISessionService
 {
     /// <summary>
     /// Возвращает список сессий
     /// </summary>
-    public async Task<List<SessionDto>> GetAllAsync()
+    public async Task<List<SessionDto>> GetAllAsync(int? grandPrixId = null)
     {
         var sessions = await sessionRepository.GetAllAsync();
-        return sessions.Select(s => s.ToDto()).ToList();
+        return sessions
+            .Where(s => grandPrixId is null || s.GrandPrixId == grandPrixId)
+            .OrderBy(s => s.DateStart)
+            .Select(s => s.ToDto())
+            .ToList();
     }
 
     /// <summary>
@@ -35,10 +41,10 @@ public class SessionService(
     /// <summary>
     /// Создает новую сессию
     /// </summary>
-    public async Task<SessionDto?> CreateAsync(SessionEditDto dto)
+    public async Task<SessionDto> CreateAsync(SessionEditDto dto)
     {
-        var grandPrix = await grandPrixRepository.GetByIdAsync(dto.GrandPrixId);
-        if (grandPrix is null) return null;
+        var grandPrix = await grandPrixRepository.GetByIdAsync(dto.GrandPrixId)
+                        ?? throw new NotFoundException($"Этап с Id={dto.GrandPrixId} не найден");
 
         await EnsureTypeUnique(dto.GrandPrixId, dto.Type, excludeId: null);
 
@@ -70,6 +76,13 @@ public class SessionService(
     /// </summary>
     public async Task<bool> DeleteAsync(int id)
     {
+        var session = await sessionRepository.GetByIdAsync(id);
+        if (session is null) return false;
+
+        var predictions = await predictionRepository.GetAllAsync();
+        if (predictions.Any(p => p.SessionId == id))
+            throw new ConflictException("Нельзя удалить сессию, на которую есть прогнозы");
+
         return await sessionRepository.DeleteAsync(id);
     }
     

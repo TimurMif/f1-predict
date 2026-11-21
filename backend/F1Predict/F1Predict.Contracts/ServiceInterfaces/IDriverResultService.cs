@@ -8,9 +8,9 @@ namespace F1Predict.Contracts.ServiceInterfaces;
 public interface IDriverResultService
 {
     /// <summary>
-    /// Возвращает список всех результатов пилота
+    /// Возвращает результаты пилотов; если указан sessionId, только результаты этой сессии
     /// </summary>
-    public Task<List<DriverResultDto>> GetAllAsync();
+    public Task<List<DriverResultDto>> GetAllAsync(int? sessionId = null);
 
     /// <summary>
     /// Возвращает результат пилота по его Id
@@ -20,7 +20,7 @@ public interface IDriverResultService
     /// <summary>
     /// Создает новый результат пилота
     /// </summary>
-    public Task<DriverResultDto?> CreateAsync(DriverResultEditDto dto);
+    public Task<DriverResultDto> CreateAsync(DriverResultEditDto dto);
 
     /// <summary>
     /// Обновляет данные существующего результата пилота

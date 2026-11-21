@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace F1Predict.Api.Controllers;
 
 /// <summary>
-/// Контроллер для команд Формулы 1
+/// Команды Формулы 1
 /// </summary>
 [ApiController]
 [Route("api/constructor")]
