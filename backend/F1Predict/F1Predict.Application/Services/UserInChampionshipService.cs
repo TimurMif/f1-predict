@@ -8,7 +8,7 @@ using F1Predict.Domain.Models;
 namespace F1Predict.Application.Services;
 
 /// <summary>
-/// Сервис для работы с записями пользователей в чемпионате
+/// Сервис участия пользователей в чемпионатах
 /// </summary>
 public class UserInChampionshipService(
     IRepository<UserInChampionship> userInChampionshipRepository,
@@ -16,51 +16,38 @@ public class UserInChampionshipService(
     IRepository<User> userRepository) : IUserInChampionshipService
 {
     /// <summary>
-    /// Возвращает список записей пользователей
+    /// Вступление в чемпионат по пригласительному коду
     /// </summary>
-    public async Task<List<UserInChampionshipDto>> GetAllAsync()
+    public async Task<UserInChampionshipDto> JoinAsync(int userId, UserInChampionshipEditDto dto)
     {
-        var userInChampionships = await userInChampionshipRepository.GetAllAsync();
-        return userInChampionships.Select(u => u.ToDto()).ToList();
-    }
-
-    /// <summary>
-    /// Возвращает запись пользователя по ее Id
-    /// </summary>
-    public async Task<UserInChampionshipDto?> GetByIdAsync(int id)
-    {
-        var userInChampionship = await userInChampionshipRepository.GetByIdAsync(id);
-        return userInChampionship?.ToDto();
-    }
-
-    /// <summary>
-    /// Создание новой записи пользователя
-    /// </summary>
-    public async Task<UserInChampionshipDto?> CreateAsync(int userId, UserInChampionshipEditDto dto)
-    {
-        var user = await userRepository.GetByIdAsync(userId);
-        if (user is null) return null;
+        var user = await userRepository.GetByIdAsync(userId)
+                   ?? throw new NotFoundException($"Пользователь с Id={userId} не найден");
 
         if (user.UserInChampionship is not null)
             throw new ConflictException("Вы уже состоите в чемпионате — сначала выйдите из текущего");
 
+        var code = dto.InviteCode.Trim().ToUpperInvariant();
         var championship = (await usersChampionshipRepository.GetAllAsync())
-            .FirstOrDefault(c => c.InviteCode == dto.InviteCode.ToUpperInvariant());
-        if (championship is null) return null;
+                               .FirstOrDefault(c => c.InviteCode == code)
+                           ?? throw new NotFoundException("Чемпионат с таким кодом приглашения не найден");
 
         var created = await userInChampionshipRepository.AddAsync(dto.ToEntity(user, championship));
         return created.ToDto();
     }
 
     /// <summary>
-    /// Удаление записи по ее Id
+    /// Выход из чемпионата
     /// </summary>
-    public async Task<bool> DeleteAsync(int id, int userId)
+    public async Task<bool> LeaveAsync(int championshipId, int userId)
     {
-        var participation = await userInChampionshipRepository.GetByIdAsync(id);
-        if (participation is null) return false;
-        if (participation.UserId != userId) return false;
+        var all = await userInChampionshipRepository.GetAllAsync();
+        var membership = all.FirstOrDefault(m => m.ChampionshipId == championshipId && m.UserId == userId);
+        if (membership is null) return false;
 
-        return await userInChampionshipRepository.DeleteAsync(id);
+        var championship = await usersChampionshipRepository.GetByIdAsync(championshipId);
+        if (championship?.CreatedByUserId == userId)
+            throw new ConflictException("Создатель не может выйти из своего чемпионата — удалите чемпионат");
+
+        return await userInChampionshipRepository.DeleteAsync(membership.Id);
     }
 }

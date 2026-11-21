@@ -8,31 +8,37 @@ namespace F1Predict.Contracts.ServiceInterfaces;
 public interface IUsersChampionshipService
 {
     /// <summary>
-    /// Возвращает список всех чемпионатов пользователей
+    /// Возвращает чемпионаты, в которых пользователь участвует или которые создал
     /// </summary>
-    public Task<List<UsersChampionshipDto>> GetAllAsync();
+    public Task<List<UsersChampionshipDto>> GetAllAsync(int currentUserId);
 
     /// <summary>
-    /// Возвращает чемпионат пользователей по его Id
+    /// Возвращает чемпионат по Id (доступен только участникам и создателю)
     /// </summary>
-    public Task<UsersChampionshipDto?> GetByIdAsync(int id);
+    public Task<UsersChampionshipDto?> GetByIdAsync(int id, int currentUserId);
 
     /// <summary>
-    /// Создает новый чемпионат пользователей
+    /// Возвращает таблицу участников чемпионата по убыванию очков
     /// </summary>
-    public Task<UsersChampionshipDto?> CreateAsync(int userId, UsersChampionshipEditDto dto);
+    public Task<List<UserInChampionshipDto>> GetStandingsAsync(int id, int currentUserId);
 
     /// <summary>
-    /// Обновляет данные существующего чемпионата пользователей
+    /// Создает новый чемпионат; создатель сразу становится участником
+    /// </summary>
+    public Task<UsersChampionshipDto> CreateAsync(int userId, UsersChampionshipEditDto dto);
+
+    /// <summary>
+    /// Обновляет данные чемпионата (только создатель)
     /// </summary>
     public Task<bool> UpdateAsync(int id, int userId, UsersChampionshipEditDto dto);
-    
+
     /// <summary>
-    /// Получение invite-code
+    /// Возвращает код приглашения (только создатель)
     /// </summary>
     public Task<string?> GetInviteCodeAsync(int id, int userId);
+
     /// <summary>
-    /// Удаляет чемпионат пользователей по его Id
+    /// Удаляет чемпионат вместе с записями участников (только создатель)
     /// </summary>
     public Task<bool> DeleteAsync(int id, int userId);
 }

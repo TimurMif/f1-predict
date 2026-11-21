@@ -38,3 +38,8 @@ DELETE {{host}}/api/grand-prix/1
 
 ### Удалить созданный этап -> 204
 DELETE {{host}}/api/grand-prix/5
+
+
+
+
+

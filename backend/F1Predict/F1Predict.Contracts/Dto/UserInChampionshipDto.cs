@@ -21,6 +21,11 @@ public record UserInChampionshipDto
     public int UserId { get; init; }
     
     /// <summary>
+    /// Имя пользователя
+    /// </summary>
+    public required string UserName { get; init; }
+    
+    /// <summary>
     /// Очки в чемпионате
     /// </summary>
     public int TotalPoints { get; init; }

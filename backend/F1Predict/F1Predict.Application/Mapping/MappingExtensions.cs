@@ -75,6 +75,7 @@ public static class MappingExtensions
             Id = p.Id,
             ChampionshipId = p.ChampionshipId,
             UserId = p.UserId,
+            UserName = $"{p.User.FirstName} {p.User.LastName}".Trim(),
             TotalPoints = p.TotalPoints,
             JoinedAt = p.JoinedAt
         };

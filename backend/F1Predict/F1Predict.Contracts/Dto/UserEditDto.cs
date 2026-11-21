@@ -12,20 +12,20 @@ public record UserEditDto
     [Required(ErrorMessage = "Имя обязательно")]
     [StringLength(50, MinimumLength = 2, ErrorMessage = "Имя: от 2 до 50 символов")]
     public required string FirstName { get; init; }
-    
+
     /// <summary>
     /// Фамилия
     /// </summary>
     [StringLength(50, MinimumLength = 2, ErrorMessage = "Фамилия: от 2 до 50 символов")]
-    public required string? LastName { get; init; }
-    
+    public string? LastName { get; init; }
+
     /// <summary>
-    /// Идентификатор через Vk. Задаётся при регистрации, при изменении профиля игнорируется.
+    /// Id во ВКонтакте. Задаётся при регистрации, при изменении профиля игнорируется.
     /// </summary>
-    public required string? VkId { get; init; }
-    
+    public string? VkId { get; init; }
+
     /// <summary>
-    /// Идентификатор через Telegram. Задаётся при регистрации, при изменении профиля игнорируется.
+    /// Id в Telegram. Задаётся при регистрации, при изменении профиля игнорируется.
     /// </summary>
-    public required string? TelegramId { get; init; }
+    public string? TelegramId { get; init; }
 }

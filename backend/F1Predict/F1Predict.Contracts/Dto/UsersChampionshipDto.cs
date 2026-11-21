@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace F1Predict.Contracts.Dto;
 
 /// <summary>
