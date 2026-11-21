@@ -76,8 +76,8 @@ public class DriverResultService(
     /// <summary>
     /// Удаляет результат пилота по Id
     /// </summary>
-    public Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        return driverResultRepository.DeleteAsync(id);
+        return await driverResultRepository.DeleteAsync(id);
     }
 }

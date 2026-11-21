@@ -1,3 +1,4 @@
+using F1Predict.Application.Exceptions;
 using F1Predict.Application.Interfaces;
 using F1Predict.Application.Mapping;
 using F1Predict.Contracts.Dto;
@@ -9,7 +10,10 @@ namespace F1Predict.Application.Services;
 /// <summary>
 /// Сервис для работы с конструкторами
 /// </summary>
-public class ConstructorService(IRepository<Constructor> constructorRepository) : IConstructorService
+public class ConstructorService(
+    IRepository<Constructor> constructorRepository,
+    IRepository<Driver> driverRepository
+    ) : IConstructorService
 {
     /// <summary>
     /// Возвращает всех конструкторов
@@ -52,8 +56,15 @@ public class ConstructorService(IRepository<Constructor> constructorRepository) 
     /// <summary>
     /// Удаляет конструктора по его Id
     /// </summary>
-    public Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        return constructorRepository.DeleteAsync(id);
+        var constructor = await constructorRepository.GetByIdAsync(id);
+        if (constructor is null) return false;
+
+        var drivers = await driverRepository.GetAllAsync();
+        if (drivers.Any(d => d.ConstructorId == id))
+            throw new ConflictException("Нельзя удалить команду, у которой есть пилоты");
+
+        return await constructorRepository.DeleteAsync(id);
     }
 }

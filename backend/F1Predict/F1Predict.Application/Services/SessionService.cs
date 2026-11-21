@@ -68,9 +68,9 @@ public class SessionService(
     /// <summary>
     /// Удаляем сессию по ее Id
     /// </summary>
-    public Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        return sessionRepository.DeleteAsync(id);
+        return await sessionRepository.DeleteAsync(id);
     }
     
     private async Task EnsureTypeUnique(int grandPrixId, SessionType type, int? excludeId)

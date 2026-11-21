@@ -43,12 +43,12 @@ public class ConstructorController(IConstructorService constructorService) : Con
     /// </summary>
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] ConstructorEditDto dto)
-        => Ok(await constructorService.UpdateAsync(id, dto) ? NoContent() : NotFound());
+        => await constructorService.UpdateAsync(id, dto) ? NoContent() : NotFound();
     
     /// <summary>
     /// Удалить команду формулы 1
     /// </summary>
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
-        => Ok(await constructorService.DeleteAsync(id) ? NoContent() : NotFound());
+        => await constructorService.DeleteAsync(id) ? NoContent() : NotFound();
 }

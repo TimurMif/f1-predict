@@ -12,7 +12,9 @@ namespace F1Predict.Application.Services;
 /// </summary>
 public class DriverService(
     IRepository<Driver> driverRepository, 
-    IRepository<Constructor> constructorRepository) : IDriverService
+    IRepository<Constructor> constructorRepository,
+    IRepository<DriverResult> driverResultRepository,
+    IRepository<Prediction> predictionRepository) : IDriverService
 {
     /// <summary>
     /// Возвращает всех пилотов
@@ -35,10 +37,9 @@ public class DriverService(
     /// <summary>
     /// Создает нового пилота
     /// </summary>
-    public async Task<DriverDto?> CreateAsync(DriverEditDto dto)
+    public async Task<DriverDto> CreateAsync(DriverEditDto dto)
     {
-        var constructor = await constructorRepository.GetByIdAsync(dto.ConstructorId);
-        if (constructor is null) return null;
+        var constructor = await GetConstructorOrThrow(dto.ConstructorId);
 
         await EnsureNumberUnique(dto.Number, excludeId: null);
 
@@ -54,8 +55,7 @@ public class DriverService(
         var driver = await driverRepository.GetByIdAsync(id);
         if (driver is null) return false;
 
-        var constructor = await constructorRepository.GetByIdAsync(dto.ConstructorId);
-        if (constructor is null) return false;
+        var constructor = await GetConstructorOrThrow(dto.ConstructorId);
 
         await EnsureNumberUnique(dto.Number, excludeId: id);
 
@@ -64,7 +64,7 @@ public class DriverService(
         driver.Number = dto.Number;
         driver.Nationality = dto.Nationality;
         driver.Points = dto.Points;
-        driver.ConstructorId = constructor.Id;   // переход в другую команду — допустим
+        driver.ConstructorId = constructor.Id;
         driver.Constructor = constructor;
 
         return await driverRepository.UpdateAsync(driver);
@@ -73,9 +73,28 @@ public class DriverService(
     /// <summary>
     /// Удаляет пилота по его Id
     /// </summary>
-    public Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        return driverRepository.DeleteAsync(id);
+        var driver = await driverRepository.GetByIdAsync(id);
+        if (driver is null) return false;
+
+        var results = await driverResultRepository.GetAllAsync();
+        var predictions = await predictionRepository.GetAllAsync();
+
+        var hasResults = results.Any(r => r.DriverId == id);
+        var hasPredictions = predictions.Any(p =>
+            p.DriverTopOneId == id || p.DriverTopTwoId == id || p.DriverTopThreeId == id);
+
+        if (hasResults || hasPredictions)
+            throw new ConflictException("Нельзя удалить пилота, у которого есть результаты или прогнозы");
+
+        return await driverRepository.DeleteAsync(id);
+    }
+    
+    private async Task<Constructor> GetConstructorOrThrow(int constructorId)
+    {
+        return await constructorRepository.GetByIdAsync(constructorId)
+               ?? throw new NotFoundException($"Команда с Id={constructorId} не найдена");
     }
     
     private async Task EnsureNumberUnique(string number, int? excludeId)

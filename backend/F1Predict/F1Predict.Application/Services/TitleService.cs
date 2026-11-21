@@ -63,9 +63,9 @@ public class TitleService(IRepository<Title> titleRepository, IRepository<User> 
     /// <summary>
     /// Удаляет титул по его Id
     /// </summary>
-    public Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        return titleRepository.DeleteAsync(id);
+        return await titleRepository.DeleteAsync(id);
     }
     
     private static void EnsureYearNotFuture(int year)
