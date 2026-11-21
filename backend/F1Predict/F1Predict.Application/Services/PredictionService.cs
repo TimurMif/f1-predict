@@ -17,48 +17,50 @@ public class PredictionService(
     IRepository<Session> sessionRepository) : IPredictionService
 {
     /// <summary>
-    /// Возвращает список всех прогнозов
+    /// Возвращает прогнозы, доступные текущему пользователю
     /// </summary>
-    public async Task<List<PredictionDto>> GetAllAsync()
+    public async Task<List<PredictionDto>> GetAllAsync(int? userId, int? sessionId, int currentUserId)
     {
         var predictions = await predictionRepository.GetAllAsync();
-        return predictions.Select(p => p.ToDto()).ToList();
+        return predictions
+            .Where(p => userId is null || p.UserId == userId)
+            .Where(p => sessionId is null || p.SessionId == sessionId)
+            .Where(p => IsVisibleTo(p, currentUserId))
+            .OrderByDescending(p => p.Created)
+            .Select(p => p.ToDto())
+            .ToList();
     }
 
     /// <summary>
     /// Возвращает прогноз по его Id
     /// </summary>
-    public async Task<PredictionDto?> GetByIdAsync(int id)
+    public async Task<PredictionDto?> GetByIdAsync(int id, int currentUserId)
     {
         var prediction = await predictionRepository.GetByIdAsync(id);
-        return prediction?.ToDto();
+        if (prediction is null) return null;
+
+        if (!IsVisibleTo(prediction, currentUserId))
+            throw new ForbiddenException("Прогнозы других участников скрыты до закрытия приёма на сессию");
+
+        return prediction.ToDto();
     }
 
     /// <summary>
     /// Создает новый прогноз
     /// </summary>
-    public async Task<PredictionDto?> CreateAsync(int userId, PredictionEditDto dto)
+    public async Task<PredictionDto> CreateAsync(int userId, PredictionEditDto dto)
     {
-        var user = await userRepository.GetByIdAsync(userId);
-        if (user is null) return null;
+        var user = await userRepository.GetByIdAsync(userId)
+                   ?? throw new NotFoundException($"Пользователь с Id={userId} не найден");
+        var session = await sessionRepository.GetByIdAsync(dto.SessionId)
+                      ?? throw new NotFoundException($"Сессия с Id={dto.SessionId} не найдена");
 
-        var session = await sessionRepository.GetByIdAsync(dto.SessionId);
-        if (session is null) return null;
+        EnsurePredictionsAccepted(session);
+        EnsureDriversDistinct(dto);
+        var (topOne, topTwo, topThree) = await GetDriversOrThrow(dto);
 
-        if (session.Status != SessionStatus.Scheduled || session.DateStart <= DateTime.UtcNow)
-            throw new ConflictException("Приём прогнозов на эту сессию закрыт");
-
-        var topOne = await driverRepository.GetByIdAsync(dto.DriverTopOneId);
-        var topTwo = await driverRepository.GetByIdAsync(dto.DriverTopTwoId);
-        var topThree = await driverRepository.GetByIdAsync(dto.DriverTopThreeId);
-        if (topOne is null || topTwo is null || topThree is null) return null;
-
-        if (dto.DriverTopOneId == dto.DriverTopTwoId ||
-            dto.DriverTopOneId == dto.DriverTopThreeId ||
-            dto.DriverTopTwoId == dto.DriverTopThreeId)
-            throw new ConflictException("Пилоты в прогнозе должны быть разными");
-
-        if ((await predictionRepository.GetAllAsync()).Any(p => p.UserId == userId && p.SessionId == dto.SessionId))
+        var all = await predictionRepository.GetAllAsync();
+        if (all.Any(p => p.UserId == userId && p.SessionId == dto.SessionId))
             throw new ConflictException("Прогноз на эту сессию уже сделан");
 
         var created = await predictionRepository.AddAsync(dto.ToEntity(user, session, topOne, topTwo, topThree));
@@ -66,30 +68,24 @@ public class PredictionService(
     }
 
     /// <summary>
-    /// Обновляет данные существующего прогноза
+    /// Обновляет подиум и время круга в своём прогнозе (сессия не меняется)
     /// </summary>
     public async Task<bool> UpdateAsync(int id, int userId, PredictionEditDto dto)
     {
         var prediction = await predictionRepository.GetByIdAsync(id);
         if (prediction is null) return false;
-        if (prediction.UserId != userId) return false;   // чужой прогноз не редактируем
 
-        if (prediction.Session.Status != SessionStatus.Scheduled || prediction.Session.DateStart <= DateTime.UtcNow)
-            throw new ConflictException("Приём прогнозов на эту сессию закрыт");
+        EnsureOwner(prediction, userId);
+        EnsurePredictionsAccepted(prediction.Session);
+        EnsureDriversDistinct(dto);
+        var (topOne, topTwo, topThree) = await GetDriversOrThrow(dto);
 
-        var topOne = await driverRepository.GetByIdAsync(dto.DriverTopOneId);
-        var topTwo = await driverRepository.GetByIdAsync(dto.DriverTopTwoId);
-        var topThree = await driverRepository.GetByIdAsync(dto.DriverTopThreeId);
-        if (topOne is null || topTwo is null || topThree is null) return false;
-
-        if (dto.DriverTopOneId == dto.DriverTopTwoId ||
-            dto.DriverTopOneId == dto.DriverTopThreeId ||
-            dto.DriverTopTwoId == dto.DriverTopThreeId)
-            throw new ConflictException("Пилоты в прогнозе должны быть разными");
-
-        prediction.DriverTopOneId = topOne.Id;  prediction.DriverTopOne = topOne;
-        prediction.DriverTopTwoId = topTwo.Id;  prediction.DriverTopTwo = topTwo;
-        prediction.DriverTopThreeId = topThree.Id; prediction.DriverTopThree = topThree;
+        prediction.DriverTopOneId = topOne.Id;
+        prediction.DriverTopOne = topOne;
+        prediction.DriverTopTwoId = topTwo.Id;
+        prediction.DriverTopTwo = topTwo;
+        prediction.DriverTopThreeId = topThree.Id;
+        prediction.DriverTopThree = topThree;
         prediction.BestSessionLapTimeMs = dto.BestSessionLapMs;
         prediction.Edited = DateTime.UtcNow;
 
@@ -97,17 +93,67 @@ public class PredictionService(
     }
 
     /// <summary>
-    /// Удаляет прогноз по Id
+    /// Удаляет свой прогноз
     /// </summary>
     public async Task<bool> DeleteAsync(int id, int userId)
     {
         var prediction = await predictionRepository.GetByIdAsync(id);
         if (prediction is null) return false;
-        if (prediction.UserId != userId) return false;
 
-        if (prediction.Session.Status != SessionStatus.Scheduled || prediction.Session.DateStart <= DateTime.UtcNow)
-            throw new ConflictException("Нельзя удалить прогноз после старта сессии");
+        EnsureOwner(prediction, userId);
+
+        if (!IsOpen(prediction.Session))
+            throw new ConflictException("Нельзя удалить прогноз после закрытия приёма на сессию");
 
         return await predictionRepository.DeleteAsync(id);
+    }
+    
+    /// <summary>
+    /// Приём прогнозов открыт, пока сессия запланирована и ещё не началась
+    /// </summary>
+    private static bool IsOpen(Session session) =>
+        session.Status == SessionStatus.Scheduled && session.DateStart > DateTime.UtcNow;
+
+    /// <summary>
+    /// Свои прогнозы видны всегда, чужие — только после закрытия приёма на сессию
+    /// </summary>
+    private static bool IsVisibleTo(Prediction prediction, int currentUserId) =>
+        prediction.UserId == currentUserId || !IsOpen(prediction.Session);
+
+    private static void EnsurePredictionsAccepted(Session session)
+    {
+        if (session.Type == SessionType.FreePractice)
+            throw new BadRequestException("На свободные практики прогнозы не принимаются");
+
+        if (!IsOpen(session))
+            throw new ConflictException("Приём прогнозов на эту сессию закрыт");
+    }
+
+    private static void EnsureOwner(Prediction prediction, int userId)
+    {
+        if (prediction.UserId != userId)
+            throw new ForbiddenException("Можно изменять только свои прогнозы");
+    }
+
+    private static void EnsureDriversDistinct(PredictionEditDto dto)
+    {
+        if (dto.DriverTopOneId == dto.DriverTopTwoId ||
+            dto.DriverTopOneId == dto.DriverTopThreeId ||
+            dto.DriverTopTwoId == dto.DriverTopThreeId)
+            throw new BadRequestException("Пилоты в прогнозе должны быть разными");
+    }
+
+    private async Task<(Driver TopOne, Driver TopTwo, Driver TopThree)> GetDriversOrThrow(PredictionEditDto dto)
+    {
+        var topOne = await GetDriverOrThrow(dto.DriverTopOneId);
+        var topTwo = await GetDriverOrThrow(dto.DriverTopTwoId);
+        var topThree = await GetDriverOrThrow(dto.DriverTopThreeId);
+        return (topOne, topTwo, topThree);
+    }
+
+    private async Task<Driver> GetDriverOrThrow(int driverId)
+    {
+        return await driverRepository.GetByIdAsync(driverId)
+               ?? throw new NotFoundException($"Пилот с Id={driverId} не найден");
     }
 }

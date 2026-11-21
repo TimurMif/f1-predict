@@ -12,7 +12,7 @@ namespace F1Predict.Api.Controllers;
 public class UsersController(IUserService userService) : ControllerBase
 {
     // Временная замена авторизации: Id текущего пользователя передаётся в заголовке
-    private const string CurrentUserHeader = "X-User-Id";
+    private const string CurrentUserHeader = ApiHeaders.CurrentUser;
 
     /// <summary>
     /// Список всех пользователей.

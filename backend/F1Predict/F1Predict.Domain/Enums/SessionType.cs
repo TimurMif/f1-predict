@@ -6,6 +6,11 @@ namespace F1Predict.Domain.Models;
 public enum SessionType
 {
     /// <summary>
+    /// Свободная тренировка
+    /// </summary>
+    FreePractice,
+    
+    /// <summary>
     /// Квалификация
     /// </summary>
     Qualifying,
