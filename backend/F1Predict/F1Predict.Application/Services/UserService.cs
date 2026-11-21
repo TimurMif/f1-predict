@@ -54,8 +54,7 @@ public class UserService(IRepository<User> userRepository) : IUserService
         var user = await userRepository.GetByIdAsync(id);
         if (user is null) return false;
 
-        user.FirstName = dto.FirstName;
-        user.LastName = dto.LastName;
+        user.Nickname = dto.Nickname;
         return await userRepository.UpdateAsync(user);
     }
 

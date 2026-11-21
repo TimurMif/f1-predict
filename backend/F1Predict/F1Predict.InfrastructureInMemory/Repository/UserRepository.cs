@@ -44,8 +44,7 @@ public class UserRepository(F1PredictContext context) : IRepository<User>
         var existing = context.Users.FirstOrDefault(u => u.Id == entity.Id);
         if (existing == null) return Task.FromResult(false);
         
-        existing.FirstName = entity.FirstName;
-        existing.LastName = entity.LastName;
+        existing.Nickname = entity.Nickname;
         existing.VkId = entity.VkId;
         existing.TelegramId = entity.TelegramId;
         

@@ -16,8 +16,7 @@ public static class MappingExtensions
         return new UserDto
         {
             Id = u.Id,
-            FirstName = u.FirstName,
-            LastName = u.LastName,
+            Nickname = u.Nickname,
             Points = u.Points,
             Titles = u.Titles.Select(t => t.ToDto()).ToList(),
             ChampionshipId = u.UserInChampionship?.ChampionshipId
@@ -31,8 +30,7 @@ public static class MappingExtensions
     {
         return new User
         {
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
+            Nickname = dto.Nickname,
             VkId = dto.VkId,
             TelegramId = dto.TelegramId,
             Points = 0
@@ -75,7 +73,7 @@ public static class MappingExtensions
             Id = p.Id,
             ChampionshipId = p.ChampionshipId,
             UserId = p.UserId,
-            UserName = $"{p.User.FirstName} {p.User.LastName}".Trim(),
+            UserName = p.User.Nickname,
             TotalPoints = p.TotalPoints,
             JoinedAt = p.JoinedAt
         };

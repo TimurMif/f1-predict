@@ -11,14 +11,9 @@ public record UserDto
     public int Id { get; init; }
     
     /// <summary>
-    /// Имя
+    /// Ник
     /// </summary>
-    public required string FirstName { get; init; }
-    
-    /// <summary>
-    /// Фамилия
-    /// </summary>
-    public string? LastName { get; init; }
+    public required string Nickname { get; init; }
     
     /// <summary>
     /// Очки

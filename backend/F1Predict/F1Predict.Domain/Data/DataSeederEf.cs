@@ -87,11 +87,11 @@ public static class DataSeederEf
     // Points предпосчитаны из прогнозов: 1=30+22+30, 2=12+35, 3=0+20, 4=30+14, 5=20.
     public static readonly object[] Users =
     {
-        new { Id = 1, FirstName = "Алексей", LastName = (string?)"Иванов", VkId = (string?)"100001", TelegramId = (string?)null, Points = 82 },
-        new { Id = 2, FirstName = "Мария", LastName = (string?)"Петрова", VkId = (string?)"100002", TelegramId = (string?)null, Points = 47 },
-        new { Id = 3, FirstName = "Дмитрий", LastName = (string?)"Смирнов", VkId = (string?)null, TelegramId = (string?)"tg_300003", Points = 20 },
-        new { Id = 4, FirstName = "Анна", LastName = (string?)null, VkId = (string?)null, TelegramId = (string?)"tg_400004", Points = 44 },
-        new { Id = 5, FirstName = "Иван", LastName = (string?)"Козлов", VkId = (string?)"100005", TelegramId = (string?)"tg_500005", Points = 20 },
+        new { Id = 1, Nickname = "Алексей", VkId = (string?)"100001", TelegramId = (string?)null, Points = 82 },
+        new { Id = 2, Nickname = "Мария", VkId = (string?)"100002", TelegramId = (string?)null, Points = 47 },
+        new { Id = 3, Nickname = "Дмитрий", VkId = (string?)null, TelegramId = (string?)"tg_300003", Points = 20 },
+        new { Id = 4, Nickname = "Анна", VkId = (string?)null, TelegramId = (string?)"tg_400004", Points = 44 },
+        new { Id = 5, Nickname = "Иван", VkId = (string?)"100005", TelegramId = (string?)"tg_500005", Points = 20 },
     };
 
     // Created/Edited вычисляются ТОЛЬКО из констант (детерминированно) — это допустимо.

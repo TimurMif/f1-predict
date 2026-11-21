@@ -7,17 +7,11 @@ using System.ComponentModel.DataAnnotations;
 public record UserEditDto
 {
     /// <summary>
-    /// Имя
+    /// Ник
     /// </summary>
-    [Required(ErrorMessage = "Имя обязательно")]
-    [StringLength(50, MinimumLength = 2, ErrorMessage = "Имя: от 2 до 50 символов")]
-    public required string FirstName { get; init; }
-
-    /// <summary>
-    /// Фамилия
-    /// </summary>
-    [StringLength(50, MinimumLength = 2, ErrorMessage = "Фамилия: от 2 до 50 символов")]
-    public string? LastName { get; init; }
+    [Required(ErrorMessage = "Ник обязателен")]
+    [StringLength(50, MinimumLength = 2, ErrorMessage = "Ник: от 2 до 50 символов")]
+    public required string Nickname { get; init; }
 
     /// <summary>
     /// Id во ВКонтакте. Задаётся при регистрации, при изменении профиля игнорируется.

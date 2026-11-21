@@ -11,14 +11,9 @@ public class User
     public int Id { get; set; }
     
     /// <summary>
-    /// Имя
+    /// Ник
     /// </summary>
-    public required string FirstName { get; set; }
-    
-    /// <summary>
-    /// Фамилия
-    /// </summary>
-    public string? LastName { get; set; }
+    public required string Nickname { get; set; }
     
     /// <summary>
     /// Id для авторизаций по Vk

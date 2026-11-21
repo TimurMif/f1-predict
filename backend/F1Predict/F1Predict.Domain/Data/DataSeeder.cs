@@ -175,13 +175,13 @@ public class DataSeeder
     private static void SeedUsers(F1PredictContext context)
     {
         // Очки пользователей накапливаются в SeedPredictions
-        var data = new (string FirstName, string? LastName, string? VkId, string? TelegramId)[]
+        var data = new (string Nickname, string? VkId, string? TelegramId)[]
         {
-            ("Алексей", "Иванов", "100001", null),
-            ("Мария", "Петрова", "100002", null),
-            ("Дмитрий", "Смирнов", null, "tg_300003"),
-            ("Анна", null, null, "tg_400004"),
-            ("Иван", "Козлов", "100005", "tg_500005"),
+            ("Алексей", "100001", null),
+            ("Мария", "100002", null),
+            ("Дмитрий", null, "tg_300003"),
+            ("Анна", null, "tg_400004"),
+            ("Иван", "100005", "tg_500005"),
         };
 
         for (var i = 0; i < data.Length; i++)
@@ -189,8 +189,7 @@ public class DataSeeder
             context.Users.Add(new User
             {
                 Id = i + 1,
-                FirstName = data[i].FirstName,
-                LastName = data[i].LastName,
+                Nickname = data[i].Nickname,
                 VkId = data[i].VkId,
                 TelegramId = data[i].TelegramId,
             });
