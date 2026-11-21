@@ -10,15 +10,22 @@ namespace F1Predict.Application.Services;
 /// <summary>
 /// Сервис для работы с титулами пользователей
 /// </summary>
-public class TitleService(IRepository<Title> titleRepository, IRepository<User> userRepository) : ITitleService
+public class TitleService(
+    IRepository<Title> titleRepository, 
+    IRepository<User> userRepository
+    ) : ITitleService
 {
     /// <summary>
-    /// Возвращает список всех титулов пользователей
+    /// Возвращает список всех титулов пользователей, при необходимости только одного пользователя
     /// </summary>
-    public async Task<List<TitleDto>> GetAllAsync()
+    public async Task<List<TitleDto>> GetAllAsync(int? userId = null)
     {
         var titles = await titleRepository.GetAllAsync();
-        return titles.Select(t => t.ToDto()).ToList();
+        return titles
+            .Where(t => userId is null || t.UserId == userId)
+            .OrderBy(t => t.Year)
+            .Select(t => t.ToDto())
+            .ToList();
     }
 
     /// <summary>
@@ -33,10 +40,10 @@ public class TitleService(IRepository<Title> titleRepository, IRepository<User> 
     /// <summary>
     /// Создает новый титул
     /// </summary>
-    public async Task<TitleDto?> CreateAsync(TitleEditDto dto)
+    public async Task<TitleDto> CreateAsync(TitleEditDto dto)
     {
-        var user = await userRepository.GetByIdAsync(dto.UserId);
-        if (user is null) return null;
+        var user = await userRepository.GetByIdAsync(dto.UserId)
+                   ?? throw new NotFoundException($"Пользователь с Id={dto.UserId} не найден");
 
         EnsureYearNotFuture(dto.Year);
         await EnsureTitleUnique(dto.UserId, dto.Year, excludeId: null);
@@ -46,7 +53,7 @@ public class TitleService(IRepository<Title> titleRepository, IRepository<User> 
     }
 
     /// <summary>
-    /// Обновляет данные существующего титула
+    /// Обновляет данные существующего титула (владелец титула не меняется)
     /// </summary>
     public async Task<bool> UpdateAsync(int id, TitleEditDto dto)
     {

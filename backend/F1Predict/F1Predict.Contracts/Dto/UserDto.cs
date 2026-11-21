@@ -18,7 +18,7 @@ public record UserDto
     /// <summary>
     /// Фамилия
     /// </summary>
-    public required string? LastName { get; init; }
+    public string? LastName { get; init; }
     
     /// <summary>
     /// Очки

@@ -8,9 +8,9 @@ namespace F1Predict.Contracts.ServiceInterfaces;
 public interface ITitleService
 {
     /// <summary>
-    /// Возвращает список всех титулов
+    /// Возвращает список всех титулов; если указан userId - только титулы этого пользователя
     /// </summary>
-    public Task<List<TitleDto>> GetAllAsync();
+    public Task<List<TitleDto>> GetAllAsync(int? userId = null);
 
     /// <summary>
     /// Возвращает титула по его Id
@@ -20,7 +20,7 @@ public interface ITitleService
     /// <summary>
     /// Создает нового титула
     /// </summary>
-    public Task<TitleDto?> CreateAsync(TitleEditDto dto);
+    public Task<TitleDto> CreateAsync(TitleEditDto dto);
 
     /// <summary>
     /// Обновляет данные существующего титула

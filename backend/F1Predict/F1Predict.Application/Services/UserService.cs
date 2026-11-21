@@ -35,7 +35,11 @@ public class UserService(IRepository<User> userRepository) : IUserService
     /// </summary>
     public async Task<UserDto> CreateAsync(UserEditDto dto)
     {
+        if (string.IsNullOrWhiteSpace(dto.VkId) && string.IsNullOrWhiteSpace(dto.TelegramId))
+            throw new BadRequestException("Укажите VkId или TelegramId");
+
         await EnsureAuthIdsUnique(dto.VkId, dto.TelegramId, excludeId: null);
+
         var created = await userRepository.AddAsync(dto.ToEntity());
         return created.ToDto();
     }
@@ -45,7 +49,8 @@ public class UserService(IRepository<User> userRepository) : IUserService
     /// </summary>
     public async Task<bool> UpdateAsync(int id, int userId, UserEditDto dto)
     {
-        if (id != userId) return false;
+        EnsureSameUser(id, userId);
+
         var user = await userRepository.GetByIdAsync(id);
         if (user is null) return false;
 
@@ -59,8 +64,14 @@ public class UserService(IRepository<User> userRepository) : IUserService
     /// </summary>
     public async Task<bool> DeleteAsync(int id, int userId)
     {
-        if (id != userId) return false;
+        EnsureSameUser(id, userId);
         return await userRepository.DeleteAsync(id);
+    }
+    
+    private static void EnsureSameUser(int id, int currentUserId)
+    {
+        if (id != currentUserId)
+            throw new ForbiddenException("Можно изменять только собственный профиль");
     }
     
     private async Task EnsureAuthIdsUnique(string? vkId, string? telegramId, int? excludeId)

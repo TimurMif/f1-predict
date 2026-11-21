@@ -16,7 +16,9 @@ public class GlobalExceptionHandler(
     {
         var (statusCode, title) = exception switch
         {
+            BadRequestException => (StatusCodes.Status400BadRequest, "Некорректный запрос"),
             NotFoundException => (StatusCodes.Status404NotFound, "Не найдено"),
+            ForbiddenException => (StatusCodes.Status403Forbidden, "Доступ запрещён"),
             ConflictException => (StatusCodes.Status409Conflict, "Конфликт"),
             _ => (StatusCodes.Status500InternalServerError, "Внутренняя ошибка сервера")
         };
