@@ -34,6 +34,27 @@ public class UserInChampionshipService(
         var created = await userInChampionshipRepository.AddAsync(dto.ToEntity(user, championship));
         return created.ToDto();
     }
+    
+    /// <summary>
+    /// Исключение участника из чемпионата
+    /// </summary>
+    public async Task<bool> KickAsync(int championshipId, int targetUserId, int currentUserId)
+    {
+        var championship = await usersChampionshipRepository.GetByIdAsync(championshipId);
+        if (championship is null) return false;
+
+        if (championship.CreatedByUserId != currentUserId)
+            throw new ForbiddenException("Исключать участников может только создатель чемпионата");
+
+        if (targetUserId == championship.CreatedByUserId)
+            throw new ConflictException("Создателя нельзя исключить — удалите чемпионат");
+
+        var all = await userInChampionshipRepository.GetAllAsync();
+        var membership = all.FirstOrDefault(m => m.ChampionshipId == championshipId && m.UserId == targetUserId);
+        if (membership is null) return false;
+
+        return await userInChampionshipRepository.DeleteAsync(membership.Id);
+    }
 
     /// <summary>
     /// Выход из чемпионата

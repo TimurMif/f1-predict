@@ -42,4 +42,45 @@ DELETE {{host}}/api/grand-prix/5
 
 
 
+### Не создатель пытается исключить -> 403
+DELETE {{host}}/api/championships/1/members/4
+X-User-Id: 2
+
+### Создатель исключает участника 4 -> 204
+DELETE {{host}}/api/championships/1/members/4
+X-User-Id: 1
+
+### В таблице осталось 2 участника
+GET {{host}}/api/championships/1/standings
+X-User-Id: 1
+
+### У исключённого больше нет чемпионата: championshipId = null
+GET {{host}}/api/users/4
+
+### Повторное исключение (его уже нет) -> 404
+DELETE {{host}}/api/championships/1/members/4
+X-User-Id: 1
+
+### Создатель пытается исключить сам себя -> 409
+DELETE {{host}}/api/championships/1/members/1
+X-User-Id: 1
+
+### Исключаемый не состоит в этом чемпионате (пользователь 5 в чемпионате 2) -> 404
+DELETE {{host}}/api/championships/1/members/5
+X-User-Id: 1
+
+### Несуществующий чемпионат -> 404
+DELETE {{host}}/api/championships/999/members/2
+X-User-Id: 1
+
+### Исключённый может вступить в другой чемпионат -> 201
+POST {{host}}/api/championships/join
+Content-Type: application/json
+X-User-Id: 4
+
+{ "inviteCode": "X9Y8Z7" }
+
+### Участник сам покидает чемпионат -> 204
+DELETE {{host}}/api/championships/1/members/me
+X-User-Id: 2
 

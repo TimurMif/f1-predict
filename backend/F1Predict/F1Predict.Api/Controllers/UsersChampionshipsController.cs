@@ -99,6 +99,16 @@ public class UsersChampionshipsController(
         => await championshipService.DeleteAsync(id, currentUserId) ? NoContent() : NotFound();
 
     /// <summary>
+    /// Исключить участника из чемпионата (только создатель).
+    /// </summary>
+    [HttpDelete("{id:int}/members/{userId:int}")]
+    public async Task<IActionResult> Kick(
+        int id,
+        int userId,
+        [FromHeader(Name = ApiHeaders.CurrentUser)] int currentUserId)
+        => await membershipService.KickAsync(id, userId, currentUserId) ? NoContent() : NotFound();
+    
+    /// <summary>
     /// Выйти из чемпионата (создатель выйти не может).
     /// </summary>
     [HttpDelete("{id:int}/members/me")]
